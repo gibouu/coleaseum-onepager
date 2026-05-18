@@ -11,7 +11,7 @@ A single-page static marketing site for **Coleaseum Housing Inc.**, served from 
 No dev server is required to view changes. Either:
 
 - Open `index.html` directly in a browser, or
-- Serve the directory (needed for `prefers-color-scheme` favicon and CDN-loaded scripts to behave realistically): `python3 -m http.server 8000`.
+- Serve the directory (needed for `prefers-color-scheme` favicons and local asset paths to behave realistically): `python3 -m http.server 8000`.
 
 There are no `npm`/`yarn`/`make` scripts. Don't try to add a build pipeline unless explicitly asked.
 
@@ -24,7 +24,7 @@ sass assets/stylesheets/main.scss assets/stylesheets/main_free.css
 sass clarity/clarity.scss clarity/clarity.css
 ```
 
-Important: `index.html` loads `assets/stylesheets/main_free.css` (not `main.css`). `main.css` is committed but unreferenced — when in doubt, edit `main_free.scss` or recompile both. `_master.scss` holds shared variables (breakpoints, font sizes, color palette) and is `@import`-ed by both `main.scss` and `clarity/clarity.scss`.
+Important: `index.html` loads `assets/stylesheets/main_free.css` (not `main.css`). `main_free.scss` is only a wrapper that imports `main.scss`; make stylesheet edits in `main.scss`, then compile to `main_free.css` with the command above. `_master.scss` holds shared variables (breakpoints, font sizes, color palette) and is `@import`-ed by both `main.scss` and `clarity/clarity.scss`.
 
 ## Architecture (the bits that aren't obvious from one file)
 
@@ -32,12 +32,9 @@ Important: `index.html` loads `assets/stylesheets/main_free.css` (not `main.css`
 
 **Two layout systems live here.** `main.scss` provides the responsive breakpoint scaffolding (containers, headings, footer, code styling, table, buttons). `clarity/clarity.scss` adds a separate 12/10/8/6/4/2-column grid utility (`.columns-12` etc.) used opportunistically. They share `_master.scss` variables.
 
-**`assets/scripts/main.js` runs two unrelated widgets** that both depend on specific DOM shape — be careful when restructuring:
+**Team section is static.** The old carousel script was removed because the page now presents the founders in a static responsive grid. Do not add carousel controls or script dependencies unless explicitly requested.
 
-- A dot-style slide menu listening on `#slide-menu` for clicks on `.dot` children, toggling `.slide-content` blocks. Currently `#slide-menu` exists (the "Meet the Team" section) but contains *no* `.dot` elements — the handler is a no-op there.
-- A horizontal carousel ("Meet the Team") that requires `.slider` inside `.container`, `#prev_btn`, and `#next_btn` to all exist on page load. It auto-rotates every 2s and pauses on hover. Items are positioned absolutely by JS at 440px intervals — don't change `.slider-item` widths without updating `main.js:32`.
-
-**Third-party dependencies are CDN-loaded** in `index.html` (jQuery, MathJax, highlight.js, FontAwesome 6.6.0 free, img-comparison-slider). FontAwesome is also vendored at `assets/fontawesome-free-6.6.0-web/` and loaded locally; the `.gitignore` excludes the *Pro* edition, so don't reach for Pro icons.
+**Third-party dependencies are intentionally minimal.** FontAwesome 6.6.0 free is vendored at `assets/fontawesome-free-6.6.0-web/` and loaded locally; the `.gitignore` excludes the *Pro* edition, so don't reach for Pro icons. Avoid adding CDN scripts or styles unless the page genuinely needs them and they are protected with integrity metadata.
 
 **Email capture posts to Web3Forms** (`https://api.web3forms.com/submit`) using the access key embedded in the form's `value` attribute (`index.html:188`). This key is intentionally public per Web3Forms' design — treat it as configuration, not a secret, but don't rotate it without coordinating with the form owner.
 
