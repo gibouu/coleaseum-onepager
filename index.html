@@ -1,5 +1,11 @@
 <html lang="en-GB">
 <head>
+    <!-- Coleaseum has rebranded to Colet. Forward to colet.ai.
+         The canonical 301 is enforced at the edge via a Cloudflare Single Redirect rule;
+         this client-side forward is the GitHub Pages fallback (runs before paint, no content flash). -->
+    <script>location.replace("https://colet.ai/");</script>
+    <meta http-equiv="refresh" content="0; url=https://colet.ai/">
+    <link rel="canonical" href="https://colet.ai/">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
